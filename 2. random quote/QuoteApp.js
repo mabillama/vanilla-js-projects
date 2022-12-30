@@ -8,6 +8,7 @@
 class QuoteApp {
   constructor() {
     this.quoteBtn = document.getElementById("getQuoteBtn");
+
     this.quoteSection = document.querySelector("section#quoteDisplay");
     this.quoteElements = {
       quote: this.quoteSection.querySelector("blockquote"),
@@ -23,21 +24,16 @@ class QuoteApp {
       "DOMContentLoaded",
       this.updatePageWithQuote.bind(this)
     );
+
+    this.dataSources = [typeFitDataSource, officialJokesDataSource];
   }
 
   // fetches result from api and returns quote data
   async getRandomQuote() {
-    const httpResult = await fetch("https://type.fit/api/quotes");
-    const jsonData = await httpResult.json();
-    const result = jsonData[Math.floor(Math.random() * jsonData.length)];
-    const quote = {
-      quote: result.text,
-      author: result.author,
-      source: "TypeFit",
-    };
+    const dataSource = this.dataSources[1];
+    const quote = await dataSource.getQuote();
 
-    console.log(quote);
-    return quote;
+    return { ...quote, source: dataSource.name };
   }
 
   async updatePageWithQuote() {
